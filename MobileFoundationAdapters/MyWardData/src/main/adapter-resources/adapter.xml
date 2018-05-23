@@ -24,14 +24,14 @@ limitations under the License.
 
 	<JAXRSApplicationClass>com.sample.CloudantJavaApplication</JAXRSApplicationClass>
 
-	<property name="account" displayName="Cloudant account" defaultValue=""  />
-	<property name="key" displayName="Cloudant key" defaultValue=""  />
-	<property name="password" displayName="Cloudant password" defaultValue=""  />
-	<property name="DBName" displayName="Cloudant DB name" defaultValue="myward"/>
+	<property name="account" displayName="Cloudant account" defaultValue="" />
+	<property name="key" displayName="Cloudant key" defaultValue="" />
+	<property name="password" displayName="Cloudant password" defaultValue="" />
+	<property name="DBName" displayName="Cloudant DB name" defaultValue="" />
 
-	<property name="endpointURL" displayName="Cloud Object Storage Endpoint Public URL" defaultValue="https://s3-api.us-geo.objectstorage.softlayer.net"/>
+	<property name="endpointURL" displayName="Cloud Object Storage Endpoint Public URL" defaultValue="/>
 	<property name="bucketName" displayName="Cloud Object Storage Bucket Name" defaultValue=""/>
 	<property name="serviceId" displayName="Cloud Object Storage Service ID" defaultValue=""  />
 	<property name="apiKey" displayName="Cloud Object Storage API Key" defaultValue=""/>
-
+	<property name="appid" displayName="Application ID" defaultValue=""/>
 </mfp:adapter>

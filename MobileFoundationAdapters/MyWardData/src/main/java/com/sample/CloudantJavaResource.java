@@ -15,6 +15,8 @@
 */
 package com.sample;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -28,10 +30,18 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.lightcouch.NoDocumentException;
 
 import com.cloudant.client.api.Database;
 import com.ibm.mfp.adapter.api.AdaptersAPI;
+import com.ibm.mfp.adapter.api.ConfigurationAPI;
 import com.ibm.mfp.adapter.api.OAuthSecurity;
 
 @Path("/")
@@ -43,7 +53,7 @@ public class CloudantJavaResource {
 
 	@Context
 	AdaptersAPI adaptersAPI;
-
+	static ConfigurationAPI configurationAPI;
 	private Database getDB() throws Exception {
 		CloudantJavaApplication app = adaptersAPI.getJaxRsApplication(CloudantJavaApplication.class);
 		if (app.db != null) {
@@ -57,11 +67,70 @@ public class CloudantJavaResource {
 	public Response addEntry(MyWardGrievance myWardGrievance) throws Exception {
 		if (myWardGrievance != null && myWardGrievance.hasRequiredFields()) {
 			getDB().save(myWardGrievance);
+			//broadcast starts here;
+			String authtokenbearer = null;
+			authtokenbearer = gettoken();
+			int  status = sendPush(authtokenbearer);
+			System.out.println(authtokenbearer);
+			System.out.println(status);
+			//broadcast ends here
 			return Response.ok().build();
 		} else {
 			return Response.status(400).build();
 		}
 	}
+	private static int sendPush(String authtokenbearer) {
+		System.out.println("Sending push notification");
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		HttpPost request = new HttpPost("https://mobilefoundation-9v9c-server.eu-gb.mybluemix.net/imfpush/v1/apps/org.mycity.myward/messages");
+		StringEntity params;
+		try {
+			params = new StringEntity("{\"message\" : {    \"alert\" : \"Hey, new problem has been reported in your area!! \"  }}");
+			request.addHeader("Content-Type", "application/json");
+			request.addHeader("Authorization", authtokenbearer );
+			request.setEntity(params);
+			HttpResponse response = httpClient.execute(request);
+			code = response.getStatusLine().getStatusCode();
+			httpClient.close();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return code;
+		
+	}
+
+private static String gettoken() {
+	// TODO Auto-generated method stub
+	String authtoken ="Bearer";
+	CloseableHttpClient httpClienttoken = HttpClients.createDefault();
+	HttpPost requesttoken = new HttpPost("https://mobilefoundation-9v9c-server.eu-gb.mybluemix.net/mfp/api/az/v1/token");
+	StringEntity paramstoken;
+	try {
+		 paramstoken = new StringEntity("grant_type=client_credentials&scope=push.application.org.mycity.myward%20messages.write");
+		 requesttoken.addHeader("Content-Type", "application/x-www-form-urlencoded");
+		 requesttoken.addHeader("Authorization", "Basic dGVzdDp0ZXN0");
+		 requesttoken.setEntity(paramstoken);
+		 HttpResponse responsetoken = httpClienttoken.execute(requesttoken);
+		 String body = EntityUtils.toString(responsetoken.getEntity());
+		 String[] str=body.split("\"");
+		 String token = str[3];
+		 authtoken = authtoken.concat(" ").concat(token);
+		 System.out.println(authtoken);
+		 httpClienttoken.close();
+	} catch (UnsupportedEncodingException e) {
+		e.printStackTrace();
+	} catch (ClientProtocolException e) {
+		e.printStackTrace();
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+	return authtoken;
+	
+}
 
 	@DELETE
 	@Path("/{id}")

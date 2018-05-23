@@ -49,8 +49,8 @@ public class CloudantJavaApplication extends MFPJAXRSApplication{
 		String cloudantAccount = configurationAPI.getPropertyValue("account");
 		String cloudantKey = configurationAPI.getPropertyValue("key");
 		String cloudantPassword = configurationAPI.getPropertyValue("password");
-
-		if (!cloudantDBName.isEmpty() && !cloudantAccount.isEmpty() && !cloudantKey.isEmpty() && !cloudantPassword.isEmpty()){
+		String appid = configurationAPI.getPropertyValue("appid");
+		if (!cloudantDBName.isEmpty() && !cloudantAccount.isEmpty() && !cloudantKey.isEmpty() && !cloudantPassword.isEmpty() && !appid.isEmpty()){
 			try {
 				CloudantClient cloudantClient = new CloudantClient(cloudantAccount,cloudantKey,cloudantPassword);
 				db = cloudantClient.database(cloudantDBName, false);

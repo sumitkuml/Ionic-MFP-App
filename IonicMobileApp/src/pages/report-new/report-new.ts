@@ -1,35 +1,26 @@
-/**
- * Copyright 2017 IBM Corp.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import { Component } from '@angular/core';
 import { NavController, NavParams, AlertController, LoadingController, ToastController } from 'ionic-angular';
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import { GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, Marker, LatLng, MyLocation } from '@ionic-native/google-maps';
 import { ImageResizer, ImageResizerOptions } from '@ionic-native/image-resizer';
+import { LoginPage } from '../login/login';
 
 import { MyWardDataProvider } from '../../providers/my-ward-data/my-ward-data';
 import { AuthHandlerProvider } from '../../providers/auth-handler/auth-handler';
-import { LoginPage } from '../login/login';
+/**
+ * Generated class for the ReportNewPage page.
+ *
+ * See https://ionicframework.com/docs/components/#navigation for more info on
+ * Ionic pages and navigation.
+ */
 
-// @IonicPage()
+//@IonicPage()
 @Component({
   selector: 'page-report-new',
   templateUrl: 'report-new.html',
 })
 export class ReportNewPage {
-  capturedImage: string = null;
+	capturedImage: string = null;
   mapReady: boolean = false;
   map: GoogleMap;
   description: string = '';
@@ -37,21 +28,22 @@ export class ReportNewPage {
   location: LatLng = null;
   loader: any;
 
+
   constructor(public navCtrl: NavController, public navParams: NavParams,
-    private camera : Camera, private alertCtrl: AlertController, private imageResizer: ImageResizer,
+  private camera: Camera, private alertCtrl: AlertController, private imageResizer: ImageResizer,
     private loadingCtrl: LoadingController, private toastCtrl: ToastController,
     private myWardDataProvider: MyWardDataProvider, private authHandler:AuthHandlerProvider) {
-    console.log('--> ReportNewPage constructor() called');
+		console.log('--> ReportNewPage constructor() called');
   }
 
   ionViewDidLoad() {
     console.log('--> ReportNewPage ionViewDidLoad() called');
     this.createMap();
-    this.initAuthChallengeHandler();
+	this.initAuthChallengeHandler();
   }
-
-  // https://ionicframework.com/docs/native/camera/
+   // https://ionicframework.com/docs/native/camera/
   takePhoto() {
+    console.log('-->take photo function called');
     const options : CameraOptions = {
       quality: 90, // picture quality
       destinationType: this.camera.DestinationType.FILE_URI,
@@ -259,8 +251,7 @@ export class ReportNewPage {
     let seconds = ((currentdate.getSeconds() < 10)? "0" : "") + currentdate.getSeconds();
     let datetime = fullYear + month + date + "_" + hours + minutes + seconds;
     return datetime;
-  }
-
+  } 
   initAuthChallengeHandler() {
     this.authHandler.setHandleChallengeCallback(() => {
       this.navCtrl.push(LoginPage, { isPushed: true, fixedUsername: this.authHandler.username });
@@ -277,4 +268,4 @@ export class ReportNewPage {
       }
     });
   }
-}
+  }

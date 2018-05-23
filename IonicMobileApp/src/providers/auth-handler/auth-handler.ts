@@ -1,28 +1,23 @@
-/**
- * Copyright 2017 IBM Corp.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 /// <reference path="../../../plugins/cordova-plugin-mfp/typings/worklight.d.ts" />
-
+//import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+/*
+  Generated class for the AuthHandlerProvider provider.
+
+  See https://angular.io/guide/dependency-injection for more info on providers
+  and Angular DI.
+*/
 @Injectable()
 export class AuthHandlerProvider {
   securityCheckName = 'UserLogin';
-  userLoginChallengeHandler;
   securityCheckNamefb='socialLogin';
+  //securityCheckName = 'SocialLoginSecurityCheck';
+  userLoginChallengeHandler;
   socialLoginChallengeHandler;
+
+  //challenge handler for fb login
+ // userFbLoginChallengeHandler;
   initialized = false;
   username = null;
 
@@ -32,21 +27,23 @@ export class AuthHandlerProvider {
   loginFailureCallback = null;
 
   constructor() {
-    console.log('--> AuthHandler constructor() called');
+    //console.log('Hello AuthHandlerProvider Provider');
+    console.log('--> AuthHandlerProvider constructor() called');
   }
-
   // Reference: https://mobilefirstplatform.ibmcloud.com/tutorials/en/foundation/8.0/authentication-and-security/credentials-validation/javascript/
   init() {
     if (this.initialized) {
       return;
     }
     this.initialized = true;
-    console.log('--> AuthHandler init() called');
+    console.log(-'-> AuthHandler init() called');
     this.userLoginChallengeHandler = WL.Client.createSecurityCheckChallengeHandler(this.securityCheckName);
+    //this.socialLoginChallengeHandler = WL.Client.createSecurityCheckChallengeHandler(this.securityCheckNamefb);
     // https://stackoverflow.com/questions/20279484/how-to-access-the-correct-this-inside-a-callback
     this.userLoginChallengeHandler.handleChallenge = this.handleChallenge.bind(this);
     this.userLoginChallengeHandler.handleSuccess = this.handleSuccess.bind(this);
     this.userLoginChallengeHandler.handleFailure = this.handleFailure.bind(this);
+    //For socialLogin challenge handler
     this.socialLoginChallengeHandler = WL.Client.createSecurityCheckChallengeHandler(this.securityCheckNamefb);
     this.socialLoginChallengeHandler.handleChallenge = this.handleChallenge.bind(this);
     this.socialLoginChallengeHandler.handleSuccess = this.handleSuccess.bind(this);
@@ -72,7 +69,7 @@ export class AuthHandlerProvider {
     console.log('--> AuthHandler handleChallenge called.\n', JSON.stringify(challenge));
     this.isChallenged = true;
     if (challenge.errorMsg !== null && this.loginFailureCallback != null) {
-      var statusMsg = 'Remaining attempts = ' + challenge.remainingAttempts + '<br>' + challenge.errorMsg;
+      var statusMsg = 'Remaining attempts = ' + challenge.remainingAttempts + '' + challenge.errorMsg;
       this.loginFailureCallback(statusMsg);
     } else if (this.handleChallengeCallback != null) {
       this.handleChallengeCallback();
@@ -104,36 +101,36 @@ export class AuthHandlerProvider {
   // Reference: https://mobilefirstplatform.ibmcloud.com/tutorials/en/foundation/8.0/authentication-and-security/user-authentication/javascript/
   checkIsLoggedIn() {
     console.log('--> AuthHandler checkIsLoggedIn called');
-    WLAuthorizationManager.obtainAccessToken('UserLogin')
-    .then(
+    WLAuthorizationManager.obtainAccessToken(this.securityCheckName)
+      .then(
       (accessToken) => {
         console.log('--> AuthHandler: obtainAccessToken onSuccess');
       },
       (error) => {
         console.log('--> AuthHandler: obtainAccessToken onFailure: ' + JSON.stringify(error));
       }
-    );
-    WLAuthorizationManager.obtainAccessToken('socialLogin')
-    .then(
+      );
+     WLAuthorizationManager.obtainAccessToken('socialLogin')
+      .then(
       (accessToken) => {
         console.log('--> AuthHandler: obtainAccessToken onSuccess');
       },
       (error) => {
         console.log('--> AuthHandler: obtainAccessToken onFailure: ' + JSON.stringify(error));
       }
-    );
+      );
   }
-
+  
   login(username, password) {
     console.log('--> AuthHandler login called. isChallenged = ', this.isChallenged);
     this.username = username;
     if (this.isChallenged) {
-      this.userLoginChallengeHandler.submitChallengeAnswer({'username':username, 'password':password});
+      this.userLoginChallengeHandler.submitChallengeAnswer({ 'username': username, 'password': password });
     } else {
       // https://stackoverflow.com/questions/20279484/how-to-access-the-correct-this-inside-a-callback
       var self = this;
-      WLAuthorizationManager.login(this.securityCheckName, {'username':username, 'password':password})
-      .then(
+      WLAuthorizationManager.login(this.securityCheckName, { 'username': username, 'password': password })
+        .then(
         (success) => {
           console.log('--> AuthHandler: login success');
         },
@@ -141,10 +138,10 @@ export class AuthHandlerProvider {
           console.log('--> AuthHandler: login failure: ' + JSON.stringify(failure));
           self.loginFailureCallback(failure.errorMsg);
         }
-      );
+        );
     }
   }
-
+  //facebook login
   loginWithFb(accessToken){
     console.log('--> AuthHandler loginwithfb called ');
     var credentials = { 'token': accessToken, 'vendor': 'facebook' };
@@ -154,7 +151,7 @@ export class AuthHandlerProvider {
       // https://stackoverflow.com/questions/20279484/how-to-access-the-correct-this-inside-a-callback
       var self = this;
       WLAuthorizationManager.login(this.securityCheckNamefb, credentials)
-      .then(
+        .then(
         (success) => {
           console.log('--> AuthHandler: login success');
         },
@@ -162,20 +159,20 @@ export class AuthHandlerProvider {
           console.log('--> AuthHandler: login failure: ' + JSON.stringify(failure));
           self.loginFailureCallback(failure.errorMsg);
         }
-      );
+        );
     }
   }
 
   logout() {
     console.log('--> AuthHandler logout called');
-    WLAuthorizationManager.logout(this.securityCheckName)
-    .then(
+    WLAuthorizationManager.logout(this.securityCheckNamefb)
+      .then(
       (success) => {
         console.log('--> AuthHandler: logout success');
       },
       (failure) => {
         console.log('--> AuthHandler: logout failure: ' + JSON.stringify(failure));
       }
-    );
+      );
   }
 }

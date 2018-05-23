@@ -1,26 +1,22 @@
 <!--
-Copyright 2015 IBM Corp.
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+  Generated template for the LoginPage page.
 
-  http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
 -->
-
 <ion-header>
+
   <ion-navbar>
     <ion-title>Login</ion-title>
   </ion-navbar>
+ 
+
 </ion-header>
 
+
 <ion-content padding>
-  <form [formGroup]="form">
+<!--  <form (submit)="processForm()" [formGroup]="form">-->
+    <form  [formGroup]="form">
     <ion-list>
       <ion-item>
         <ion-label fixed>Username</ion-label>
@@ -36,6 +32,16 @@ limitations under the License.
     </div>
     <div padding>
       <button ion-button block (click)="fbLogin()">Facebook Login</button>
+   <!-- <button ion-button block type="submit">Sign In using Facebook</button>-->
     </div>
+  <!--  <ion-card *ngIf="userData">
+      <ion-card-header>{{ users.username }}</ion-card-header>
+      <img [src]="users.picture" />
+      <ion-card-content>
+        <p>Email: {{ users.email }}</p>
+        <p>First Name: {{ users.first_name }}</p>
+      </ion-card-content>
+    </ion-card>-->
   </form>
+ 
 </ion-content>

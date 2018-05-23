@@ -1,0 +1,37 @@
+<!--
+  Generated template for the SetRangePage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>set-range</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <div id="map"></div>
+  <h2>Enter Range</h2>
+  <ion-item>
+    <ion-input type="text" placeholder="In meters" [(ngModel)]="range"></ion-input>
+  </ion-item>
+  <button ion-button full (click)="captureLocation()">
+      <!-- <ion-icon name="cloud-upload"></ion-icon>-->
+         Ok
+     </button>
+  <div>
+  <button ion-button full (click)="submit()">
+      <ion-icon name="cloud-upload"></ion-icon>
+        Submit
+    </button>
+  </div>
+  <!--ini and reg-->
+  <button ion-button full (click)="ini()">
+    <!-- <ion-icon name="cloud-upload"></ion-icon>-->
+      ini
+   </button>
+</ion-content>
